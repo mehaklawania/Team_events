@@ -1,11 +1,14 @@
 "use client"
 
 import { useState } from "react"
+import { motion } from "framer-motion"
 import Link from "next/link"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ThumbsUp, Users, Calendar, MapPin, Clock, MessageSquare } from "lucide-react"
+import { AnimatedCard } from "@/components/ui/animated-card"
+import { AnimatedButton } from "@/components/ui/animated-button"
 
 type EventType = "Challenge" | "Collaboration" | "Exploration" | "Hangout"
 
@@ -23,9 +26,10 @@ interface EventProps {
     teams: string[]
     status: string
   }
+  index?: number
 }
 
-export default function EventCard({ event }: EventProps) {
+export default function EventCard({ event, index = 0 }: EventProps) {
   const [votes, setVotes] = useState(event.votes)
   const [hasVoted, setHasVoted] = useState(false)
 
@@ -71,13 +75,15 @@ export default function EventCard({ event }: EventProps) {
   }
 
   return (
-    <Card className="overflow-hidden">
+    <AnimatedCard delay={index} className="overflow-hidden">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div>
-            <Badge variant={getBadgeVariant(event.type)} className="mb-2">
-              {event.type}
-            </Badge>
+            <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
+              <Badge variant={getBadgeVariant(event.type)} className="mb-2">
+                {event.type}
+              </Badge>
+            </motion.div>
             <CardTitle className="text-xl">{event.name}</CardTitle>
             <CardDescription className="flex items-center mt-1">
               <span>Created by </span>
@@ -87,10 +93,17 @@ export default function EventCard({ event }: EventProps) {
               </div>
             </CardDescription>
           </div>
-          <Button variant={hasVoted ? "default" : "outline"} size="sm" className="flex gap-1" onClick={handleVote}>
-            <ThumbsUp className="h-4 w-4" />
-            <span>{votes}</span>
-          </Button>
+          <motion.div whileTap={{ scale: 0.9 }} transition={{ duration: 0.2 }}>
+            <Button
+              variant={hasVoted ? "default" : "outline"}
+              size="sm"
+              className={`flex gap-1 ${hasVoted ? "bg-primary/90 hover:bg-primary/80" : ""}`}
+              onClick={handleVote}
+            >
+              <ThumbsUp className="h-4 w-4" />
+              <span>{votes}</span>
+            </Button>
+          </motion.div>
         </div>
       </CardHeader>
       <CardContent>
@@ -120,17 +133,21 @@ export default function EventCard({ event }: EventProps) {
           <div className="text-sm font-medium mb-2">Participating Teams:</div>
           <div className="flex flex-wrap gap-2">
             {event.teams.map((team, index) => (
-              <Badge key={index} variant="outline" className="flex items-center">
-                <div
-                  className={`h-2 w-2 rounded-full mr-1.5 ${getTeamColorStyle(index === 0 ? event.creatorColor : "blue")}`}
-                ></div>
-                {team}
-              </Badge>
+              <motion.div key={index} whileHover={{ y: -2 }} transition={{ duration: 0.2 }}>
+                <Badge variant="outline" className="flex items-center">
+                  <div
+                    className={`h-2 w-2 rounded-full mr-1.5 ${getTeamColorStyle(index === 0 ? event.creatorColor : "blue")}`}
+                  ></div>
+                  {team}
+                </Badge>
+              </motion.div>
             ))}
             {event.status === "Open for teams" && (
-              <Badge variant="outline" className="bg-muted/50">
-                + Join
-              </Badge>
+              <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
+                <Badge variant="outline" className="bg-muted/50 cursor-pointer hover:bg-accent">
+                  + Join
+                </Badge>
+              </motion.div>
             )}
           </div>
         </div>
@@ -140,11 +157,11 @@ export default function EventCard({ event }: EventProps) {
           <MessageSquare className="h-4 w-4" />
           <span>Comments</span>
         </Button>
-        <Button size="sm" asChild>
+        <AnimatedButton size="sm" asChild>
           <Link href={`/events/${event.id}`}>View Details</Link>
-        </Button>
+        </AnimatedButton>
       </CardFooter>
-    </Card>
+    </AnimatedCard>
   )
 }
 

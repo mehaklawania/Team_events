@@ -1,9 +1,15 @@
+"use client"
+
+import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Calendar, Trophy, MapPin, Clock } from "lucide-react"
+import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Calendar, Trophy, MapPin, Clock, ArrowRight } from "lucide-react"
 import EventCard from "@/components/event-card"
 import TeamCard from "@/components/team-card"
+import { AnimatedButton } from "@/components/ui/animated-button"
+import { AnimatedCard } from "@/components/ui/animated-card"
+import { SectionHeading } from "@/components/ui/section-heading"
 
 export default function Home() {
   // Sample data - in a real app, this would come from a database
@@ -82,154 +88,226 @@ export default function Home() {
     },
   ]
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.5 },
+    },
+  }
+
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-purple-700 to-indigo-800 text-white py-16">
+      <section className="bg-gradient-to-r from-primary to-secondary text-white py-16 -mx-6 sm:-mx-8 md:-mx-10 px-6 sm:px-8 md:px-10 mb-16">
         <div className="mx-auto">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl font-bold mb-4">Team Up, Challenge, Collaborate & Explore</h1>
-            <p className="text-xl mb-8">
+          <motion.div
+            className="max-w-3xl mx-auto text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.h1
+              className="text-4xl md:text-5xl font-bold mb-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              Team Up, Challenge, Collaborate & Explore
+            </motion.h1>
+            <motion.p
+              className="text-xl mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
               Join teams, create events, challenge others, and build community through shared experiences
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button size="lg" asChild>
+            </motion.p>
+            <motion.div
+              className="flex flex-wrap justify-center gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <AnimatedButton size="lg" variant="gradient" asChild>
                 <Link href="/teams/create">Create a Team</Link>
-              </Button>
-              <Button size="lg" variant="outline" className="bg-white/10" asChild>
+              </AnimatedButton>
+              <AnimatedButton size="lg" variant="outline" className="bg-white/10 text-white hover:bg-white/20" asChild>
                 <Link href="/events/explore">Explore Events</Link>
-              </Button>
-            </div>
-          </div>
+              </AnimatedButton>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* Main Content */}
-      <div className="mx-auto py-16">
+      <div className="mx-auto py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Trending Events Section */}
           <div className="lg:col-span-2 space-y-8">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold">Trending Events</h2>
-              <Button variant="ghost" asChild>
-                <Link href="/events/explore">View All</Link>
+              <SectionHeading title="Trending Events" gradient={true} />
+              <Button variant="ghost" className="group" asChild>
+                <Link href="/events/explore" className="flex items-center gap-1">
+                  View All
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
               </Button>
             </div>
 
-            <div className="grid gap-6">
-              {trendingEvents.map((event) => (
-                <EventCard key={event.id} event={event} />
+            <motion.div className="grid gap-6" variants={containerVariants} initial="hidden" animate="visible">
+              {trendingEvents.map((event, index) => (
+                <motion.div key={event.id} variants={itemVariants}>
+                  <EventCard event={event} index={index} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
 
             <div className="mt-12">
-              <h2 className="text-2xl font-bold mb-6">Suggested Event Ideas</h2>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Looking for inspiration?</CardTitle>
-                  <CardDescription>Here are some popular event categories to get you started</CardDescription>
-                </CardHeader>
-                <CardContent>
+              <SectionHeading
+                title="Suggested Event Ideas"
+                description="Here are some popular event categories to get you started"
+                className="mb-6"
+              />
+              <AnimatedCard>
+                <CardContent className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="border rounded-lg p-4">
-                      <h3 className="font-semibold text-lg mb-2">Challenges</h3>
+                    <motion.div
+                      className="border rounded-lg p-4 hover:border-primary/50 hover:bg-accent/50 transition-colors"
+                      whileHover={{ y: -5 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <h3 className="font-semibold text-lg mb-2 text-primary">Challenges</h3>
                       <ul className="space-y-2">
                         <li>• Sports tournaments</li>
                         <li>• Trivia competitions</li>
                         <li>• Hackathons</li>
                         <li>• Cooking contests</li>
                       </ul>
-                    </div>
-                    <div className="border rounded-lg p-4">
-                      <h3 className="font-semibold text-lg mb-2">Collaborations</h3>
+                    </motion.div>
+                    <motion.div
+                      className="border rounded-lg p-4 hover:border-secondary/50 hover:bg-accent/50 transition-colors"
+                      whileHover={{ y: -5 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <h3 className="font-semibold text-lg mb-2 text-secondary">Collaborations</h3>
                       <ul className="space-y-2">
                         <li>• Community service</li>
                         <li>• Skill workshops</li>
                         <li>• Art projects</li>
                         <li>• Language exchanges</li>
                       </ul>
-                    </div>
-                    <div className="border rounded-lg p-4">
-                      <h3 className="font-semibold text-lg mb-2">Explorations</h3>
+                    </motion.div>
+                    <motion.div
+                      className="border rounded-lg p-4 hover:border-primary/50 hover:bg-accent/50 transition-colors"
+                      whileHover={{ y: -5 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <h3 className="font-semibold text-lg mb-2 text-primary">Explorations</h3>
                       <ul className="space-y-2">
                         <li>• City scavenger hunts</li>
                         <li>• Nature hikes</li>
                         <li>• Food tours</li>
                         <li>• Museum visits</li>
                       </ul>
-                    </div>
-                    <div className="border rounded-lg p-4">
-                      <h3 className="font-semibold text-lg mb-2">Hangouts</h3>
+                    </motion.div>
+                    <motion.div
+                      className="border rounded-lg p-4 hover:border-secondary/50 hover:bg-accent/50 transition-colors"
+                      whileHover={{ y: -5 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <h3 className="font-semibold text-lg mb-2 text-secondary">Hangouts</h3>
                       <ul className="space-y-2">
                         <li>• Movie nights</li>
                         <li>• Game sessions</li>
                         <li>• Coffee meetups</li>
                         <li>• Picnics</li>
                       </ul>
-                    </div>
+                    </motion.div>
+                  </div>
+                  <div className="mt-6">
+                    <AnimatedButton className="w-full" variant="gradient" asChild>
+                      <Link href="/events/create">Create Your Event</Link>
+                    </AnimatedButton>
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Button className="w-full" asChild>
-                    <Link href="/events/create">Create Your Event</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
+              </AnimatedCard>
             </div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-8">
             {/* CTA for non-logged in users */}
-            <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-100">
+            <AnimatedCard className="bg-gradient-to-br from-accent/50 to-background border-primary/20">
               <CardHeader>
                 <CardTitle>Ready to join the fun?</CardTitle>
                 <CardDescription>Create or join a team to start participating in events</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Button className="w-full" asChild>
+                <AnimatedButton className="w-full" variant="gradient" asChild>
                   <Link href="/signup">Sign Up</Link>
-                </Button>
-                <Button variant="outline" className="w-full" asChild>
+                </AnimatedButton>
+                <AnimatedButton variant="outline" className="w-full" asChild>
                   <Link href="/login">Log In</Link>
-                </Button>
+                </AnimatedButton>
               </CardContent>
-            </Card>
+            </AnimatedCard>
 
             {/* Top Teams Leaderboard */}
-            <Card>
+            <AnimatedCard delay={1}>
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle>Top Teams</CardTitle>
-                  <Trophy className="h-5 w-5 text-yellow-500" />
+                  <Trophy className="h-5 w-5 text-yellow-500 animate-bounce-small" />
                 </div>
                 <CardDescription>Based on engagement and activity</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {topTeams.map((team) => (
-                    <TeamCard key={team.id} team={team} />
+                <motion.div className="space-y-4" variants={containerVariants} initial="hidden" animate="visible">
+                  {topTeams.map((team, index) => (
+                    <motion.div key={team.id} variants={itemVariants}>
+                      <TeamCard team={team} index={index} />
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               </CardContent>
               <CardFooter>
-                <Button variant="ghost" className="w-full" asChild>
-                  <Link href="/leaderboard">View Full Leaderboard</Link>
+                <Button variant="ghost" className="w-full group" asChild>
+                  <Link href="/leaderboard" className="flex items-center justify-center gap-1">
+                    View Full Leaderboard
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
                 </Button>
               </CardFooter>
-            </Card>
+            </AnimatedCard>
 
             {/* Upcoming Events */}
-            <Card>
+            <AnimatedCard delay={2}>
               <CardHeader>
                 <CardTitle>Upcoming Events</CardTitle>
                 <CardDescription>Events happening soon</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {trendingEvents.slice(0, 2).map((event) => (
-                    <div key={event.id} className="flex items-start space-x-3 border-b pb-3 last:border-0">
-                      <Calendar className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
+                  {trendingEvents.slice(0, 2).map((event, index) => (
+                    <motion.div
+                      key={event.id}
+                      className="flex items-start space-x-3 border-b pb-3 last:border-0 hover:bg-accent/50 p-2 rounded-md transition-colors"
+                      whileHover={{ x: 5 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Calendar className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                       <div>
                         <h4 className="font-medium">{event.name}</h4>
                         <div className="text-sm text-muted-foreground">
@@ -250,16 +328,19 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </CardContent>
               <CardFooter>
-                <Button variant="ghost" className="w-full" asChild>
-                  <Link href="/events/calendar">View Calendar</Link>
+                <Button variant="ghost" className="w-full group" asChild>
+                  <Link href="/events/calendar" className="flex items-center justify-center gap-1">
+                    View Calendar
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
                 </Button>
               </CardFooter>
-            </Card>
+            </AnimatedCard>
           </div>
         </div>
       </div>
